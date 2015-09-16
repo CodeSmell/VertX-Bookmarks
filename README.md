@@ -5,7 +5,7 @@ This version is built using Java 8 and Maven, but Vert.x can support various JVM
 
 The ([Reactive Manifesto](http://www.reactivemanifesto.org/)) defines reactive applications as "systems that are Responsive, Resilient, Elastic and Message Driven."
 
-This project builds the Bookmarks REST services found in chapter 1 of the Pragmatic Programmers book Seven Web Frameworks in Seven Weeks. The original services in the book were built using Sinatra. 
+This project builds the Bookmarks REST services found in chapter 1 of the Pragmatic Programmers book *Seven Web Frameworks in Seven Weeks*. The original services in the book were built using Sinatra. 
 
 It also relied on the Vert.x Core Manual and the Intro series
 - ([Core Manual](http://vertx.io/docs/vertx-core/java/))
