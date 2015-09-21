@@ -5,7 +5,10 @@ import io.vertx.core.Future;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.Router;
-
+/**
+ * Hello World using Vert.x Web extensions
+ *
+ */
 public class WebHelloVerticle extends AbstractVerticle {
 	public static final String HELLO_HTML = "<h1>Hello World from Vert.x Web</h1>";
 

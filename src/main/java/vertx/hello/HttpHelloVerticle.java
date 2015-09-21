@@ -15,7 +15,9 @@ public class HttpHelloVerticle extends AbstractVerticle {
 	public static final String HELLO_HTML = "<h1>Hello World from Vert.x 3</h1>";
 
 	/**
-	 * Called when verticle is deployed Verticle is in the started state when
+	 * Called when verticle is deployed 
+	 * <br>
+	 * Verticle is in the started state when
 	 * this method calls complete on Future
 	 */
 	@Override
