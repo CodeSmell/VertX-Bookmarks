@@ -1,7 +1,7 @@
 # VertX-Bookmarks
 This project was created as a place to learn ([Vert.x](http://vertx.io/)), an event driven and non blocking framework for creating reactive applications. Vert.x runs on the JVM and its architecture and approach are based on the Reactor pattern, similar to Node.js.
 
-If you are wondering about Vert.x, there is a good writeup in ([JavaWorld](http://www.javaworld.com/article/2078838/mobile-java/open-source-java-projects-vert-x.html)), though it covers version 2.
+If you are wondering about Vert.x, there is an interview with creator Tim Fox on ([InfoQ](http://www.infoq.com/articles/vertx-3-tim-fox)). There is also a good writeup in ([JavaWorld](http://www.javaworld.com/article/2078838/mobile-java/open-source-java-projects-vert-x.html)), though it covers version 2.
 
 This version is built using Java 8 and Maven, but Vert.x can support various JVM languages
 
@@ -15,3 +15,23 @@ It also relied on the Vert.x Core Manual and the Intro series
 - ([Vert.x App Configuration] (http://vertx.io/blog/vert-x-application-configuration/index.html))
 - ([Some REST with Vert.x] (http://vertx.io/blog/some-rest-with-vert-x/index.html))
 - ([Unit and Integration tests] (http://vertx.io/blog/unit-and-integration-tests/index.html))
+
+## Handling Objects
+One challenge when I started working on the project was how to manage dependencies. After working with IoC frameworks, it seemed like a step backward to start doing this:
+
+	private BookmarkDao bookmarksDao = new BookmarkNoDatabaseDao();
+	
+Therefore I chose to use Spring IoC to manage dependencies but that is not required for Vert.x applications. 
+
+## Handling Data Access
+The other challenge in this project was working through how to access data. While using MongoDB is recommended, I figured that the original Bookmarks project in the PragProg book used a RDBMS. And, let's face it most projects are using SQL databases. Having already chosen to manage dependencies with Spring, I chose to use MyBatis and Spring to handle the data access.
+
+## Running from Maven
+Run the following goals: 
+	
+	mvn clean package
+
+Then run the "fat" JAR file
+	
+	java -jar Bookmarks-0.0.1-SNAPSHOT-fat.jar
+

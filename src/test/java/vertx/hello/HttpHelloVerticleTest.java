@@ -23,7 +23,6 @@ public class HttpHelloVerticleTest {
 	@Before
 	public void setup(TestContext context) {
 		vertx = Vertx.vertx();
-	
 		DeploymentOptions options = new DeploymentOptions().setConfig(new JsonObject().put("http.port", port));
 		vertx.deployVerticle(HttpHelloVerticle.class.getName(), options, context.asyncAssertSuccess());
 	}
@@ -39,7 +38,9 @@ public class HttpHelloVerticleTest {
 		
 		vertx.createHttpClient().getNow(port, "localhost", "/", response -> {
 			response.handler(body->{
-		        context.assertTrue(body.toString().contains("Hello"));
+				String stringBody = body.toString();
+				System.out.println(stringBody);
+		        context.assertTrue(stringBody.contains("Hello"));
 		        async.complete();
 			});
 		});
