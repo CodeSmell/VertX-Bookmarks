@@ -4,10 +4,14 @@ import static org.mockito.Mockito.when;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -45,6 +49,85 @@ public class BookmarksVerticleTest {
 		vertx.close(context.asyncAssertSuccess());
 	}
 
+	@Test
+	public void test_get_all_bookmarks(TestContext context) {
+		final Async async = context.async();
+
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
+
+		List<Bookmark> bookmarks = new ArrayList<Bookmark>();
+		bookmarks.add(new Bookmark("1", "", "Vert.x"));
+		bookmarks.add(new Bookmark("2", "", "Node.js"));
+		when(mockDao.getAllBookmarks()).thenReturn(bookmarks);
+
+		vertx.createHttpClient().getNow(port, "localhost", requestUri, 
+				response -> {
+					context.assertEquals(200, response.statusCode());
+					response.bodyHandler(body -> {
+						JsonArray jsonArray = new JsonArray(body.toString());
+						context.assertNotNull(jsonArray);
+						context.assertEquals(2, jsonArray.size());
+						
+						Bookmark bm = Json.decodeValue(jsonArray.getJsonObject(0).toString(), Bookmark.class);
+						context.assertEquals("Vert.x", bm.getBookmarkTitle());
+						
+						bm = Json.decodeValue(jsonArray.getJsonObject(1).toString(), Bookmark.class);
+						context.assertEquals("Node.js", bm.getBookmarkTitle());
+						
+						async.complete();
+					});					
+				});
+	}
+
+	@Test
+	public void test_get_all_bookmarks_not_found_empty(TestContext context) {
+		final Async async = context.async();
+
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
+		
+		List<Bookmark> bookmarks = new ArrayList<Bookmark>();
+		when(mockDao.getAllBookmarks()).thenReturn(bookmarks);
+
+		vertx.createHttpClient().getNow(port, "localhost", requestUri, 
+				response -> {
+					context.assertEquals(204, response.statusCode());
+					async.complete();
+				});
+	}
+	
+	@Test
+	public void test_get_all_bookmarks_not_found_null(TestContext context) {
+		final Async async = context.async();
+
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
+		
+		when(mockDao.getAllBookmarks()).thenReturn(null);
+
+		vertx.createHttpClient().getNow(port, "localhost", requestUri, 
+				response -> {
+					context.assertEquals(204, response.statusCode());
+					async.complete();
+				});
+	}
+	
+	@Test
+	public void test_get_all_bookmarks_exception(TestContext context) {
+		final Async async = context.async();
+
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
+		
+		when(mockDao.getAllBookmarks()).thenThrow(new RuntimeException("testing when things go bad"));
+
+		vertx.createHttpClient().getNow(port, "localhost", requestUri, 
+				response -> {
+					context.assertEquals(500, response.statusCode());
+					response.handler(body -> {
+						context.assertEquals("testing when things go bad", body.toString());
+						async.complete();
+					});					
+				});
+	}
+	
 	@Test
 	public void test_get_bookmark(TestContext context) {
 		final Async async = context.async();
@@ -100,7 +183,6 @@ public class BookmarksVerticleTest {
 					});					
 				});
 	}
-	
 	
 	@Test
 	public void test_add_bookmark(TestContext context) {
