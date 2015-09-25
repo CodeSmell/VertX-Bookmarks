@@ -3,7 +3,6 @@ package vertx.pragprog.bookmarks;
 import static org.mockito.Mockito.when;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
@@ -102,28 +101,71 @@ public class BookmarksVerticleTest {
 				});
 	}
 	
+	
 	@Test
-	public void test_get_bookmark_exception2(TestContext context) {
+	public void test_add_bookmark(TestContext context) {
 		final Async async = context.async();
 
-		String id = "1";
-		String requestUri = BookmarksVerticle.BOOKMARK_URL + "/" + id;
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
 
-		when(mockDao.getBookmark(Matchers.anyString())).thenThrow(new RuntimeException("testing when things go bad"));
+		when(mockDao.addBookmark(Matchers.anyObject())).thenReturn("5150");
 
-		HttpClientRequest req = vertx.createHttpClient().get(port, "localhost", requestUri);
+		final String json = Json.encodePrettily(new Bookmark(null, "nodejs.org", "Node.js"));
 
-		req.exceptionHandler(err -> {
-			context.fail(err.getMessage());
-			async.complete();
-		});
+		vertx.createHttpClient().post(port, "localhost", requestUri)
+			.putHeader("content-type", "application/json")
+			.putHeader("content-length", Integer.toString(json.length()))
+			.handler(response -> {
+				context.assertEquals(201, response.statusCode());
+				response.bodyHandler(body -> {
+					context.assertEquals("/bookmarks/5150", body.toString());
+					async.complete();
+				});	
+			}).write(json).end();
+	}
+	
+	@Test
+	public void test_add_bookmark_invalid_json(TestContext context) {
+		final Async async = context.async();
 
-		req.handler(response -> {
-			context.assertEquals(500, response.statusCode());
-			async.complete();
-		});
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
 
-		req.end();
+		when(mockDao.addBookmark(Matchers.anyObject())).thenReturn("5150");
+
+		final String json = "\"bookmarkTitle\" : \"Node.js\"";
+		
+		vertx.createHttpClient().post(port, "localhost", requestUri)
+			.putHeader("content-type", "application/json")
+			.putHeader("content-length", Integer.toString(json.length()))
+			.handler(response -> {
+				context.assertEquals(400, response.statusCode());
+				response.bodyHandler(body -> {
+					context.assertEquals("invalid JSON", body.toString());
+					async.complete();
+				});	
+			}).write(json).end();
+	}
+	
+	@Test
+	public void test_add_bookmark_exception(TestContext context) {
+		final Async async = context.async();
+
+		String requestUri = BookmarksVerticle.BOOKMARK_URL;
+
+		when(mockDao.addBookmark(Matchers.anyObject())).thenThrow(new RuntimeException("testing when things go bad"));
+
+		final String json = Json.encodePrettily(new Bookmark(null, "nodejs.org", "Node.js"));
+		
+		vertx.createHttpClient().post(port, "localhost", requestUri)
+			.putHeader("content-type", "application/json")
+			.putHeader("content-length", Integer.toString(json.length()))
+			.handler(response -> {
+				context.assertEquals(500, response.statusCode());
+				response.bodyHandler(body -> {
+					context.assertEquals("testing when things go bad", body.toString());
+					async.complete();
+				});	
+			}).write(json).end();
 	}
 
 }

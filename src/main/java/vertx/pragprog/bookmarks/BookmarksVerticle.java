@@ -116,32 +116,47 @@ public class BookmarksVerticle extends AbstractVerticle {
 	 * add a new bookmark
 	 */
 	protected void addBookmark(RoutingContext routingContext) {
-		// TODO: JSON decode errors? currently returns a 500 status code
-		// get the Bookmark from the HTTP request
-		final Bookmark bm = Json.decodeValue(routingContext.getBodyAsString(), Bookmark.class);
 
-		vertx.executeBlocking(
-				future -> {
-					this.asynchAddBookmark(future, bm);
-				},
-				asynchResult -> {
-					if (asynchResult.succeeded()) {
-						// Return the URL to the new bookmark
-						String id = (String) asynchResult.result();
-						routingContext.response()
-							.setStatusCode(201)
-							.putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT)
-							.end(BOOKMARK_URL + "/" + id);
-					}
-					else {
-						// error during retrieval
-						String errText = asynchResult.cause().getMessage();
-						log.error(errText);
-						routingContext.response().setStatusCode(500).end(errText);
-					}
-				});
+		final Bookmark bm = this.decodeJsonToBookmark(routingContext.getBodyAsString());
+		if (bm!=null){
+			vertx.executeBlocking(
+					future -> {
+						this.asynchAddBookmark(future, bm);
+					},
+					asynchResult -> {
+						if (asynchResult.succeeded()) {
+							// Return the URL to the new bookmark
+							String id = (String) asynchResult.result();
+							routingContext.response()
+								.setStatusCode(201)
+								.putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT)
+								.end(BOOKMARK_URL + "/" + id);
+						}
+						else {
+							// error during retrieval
+							String errText = asynchResult.cause().getMessage();
+							log.error(errText);
+							routingContext.response().setStatusCode(500).end(errText);
+						}
+					});
+		}
+		else {
+			// invalid JSON
+			routingContext.response().setStatusCode(400).end("invalid JSON");			
+		}
 	}
 
+	protected Bookmark decodeJsonToBookmark(String json){
+		Bookmark bm = null;
+		try {
+			bm = Json.decodeValue(json,Bookmark.class);
+		}
+		catch(Exception e){
+			log.warn("invalid JSON:" + json);
+		}
+		return bm;
+	}
+	
 	protected void asynchAddBookmark(Future<Object> future, Bookmark bm) {
 		log.info("aynch attempting to add a Bookmark");
 
