@@ -33,5 +33,5 @@ Run the following goals:
 
 Then run the "fat" JAR file
 	
-	java -jar Bookmarks-0.0.1-SNAPSHOT-fat.jar
+	java -jar target/Bookmarks-0.0.1-SNAPSHOT-fat.jar
 
