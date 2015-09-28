@@ -1,4 +1,4 @@
-package vertx.hello;
+package codesmell.vertx.hello;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;

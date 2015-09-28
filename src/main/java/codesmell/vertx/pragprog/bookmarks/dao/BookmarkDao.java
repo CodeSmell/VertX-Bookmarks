@@ -1,8 +1,8 @@
-package vertx.pragprog.bookmarks.dao;
+package codesmell.vertx.pragprog.bookmarks.dao;
 
 import java.util.Collection;
 
-import vertx.pragprog.bookmarks.Bookmark;
+import codesmell.vertx.pragprog.bookmarks.Bookmark;
 
 public interface BookmarkDao {
 	Collection<Bookmark> getAllBookmarks();
@@ -10,4 +10,8 @@ public interface BookmarkDao {
 	Bookmark getBookmark(String id);
 	
 	String addBookmark(Bookmark bm);
+	
+	void updateBookmark(Bookmark bm);
+	
+	void deleteBookmark(String id);
 }

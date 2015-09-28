@@ -1,6 +1,6 @@
-package vertx.pragprog.bookmarks;
+package codesmell.vertx.pragprog.bookmarks;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
@@ -22,7 +22,10 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import vertx.pragprog.bookmarks.dao.BookmarkDao;
+import codesmell.vertx.pragprog.bookmarks.Bookmark;
+import codesmell.vertx.pragprog.bookmarks.BookmarksVerticle;
+import codesmell.vertx.pragprog.bookmarks.dao.BookmarkDao;
+import codesmell.vertx.pragprog.exceptions.NotFoundException;
 
 @RunWith(VertxUnitRunner.class)
 public class BookmarksVerticleTest {
@@ -250,4 +253,52 @@ public class BookmarksVerticleTest {
 			}).write(json).end();
 	}
 
+	
+	@Test
+	public void test_delete_bookmark(TestContext context) {
+		final Async async = context.async();
+
+		String id = "1";
+		String requestUri = BookmarksVerticle.BOOKMARK_URL + "/" + id;
+
+		doNothing().when(mockDao).deleteBookmark(id);
+
+		vertx.createHttpClient().delete(port, "localhost", requestUri)
+			.handler(response -> {
+				context.assertEquals(200, response.statusCode());
+				async.complete();
+			}).end();
+	}
+
+	@Test
+	public void test_delete_bookmark_not_found(TestContext context) {
+		final Async async = context.async();
+
+		String id = "2112";
+		String requestUri = BookmarksVerticle.BOOKMARK_URL + "/" + id;
+		
+		doThrow(new NotFoundException(id)).when(mockDao).deleteBookmark(id);
+
+		vertx.createHttpClient().delete(port, "localhost", requestUri)
+			.handler(response -> {
+				context.assertEquals(410, response.statusCode());
+				async.complete();
+			}).end();
+	}
+	
+	@Test
+	public void test_delete_bookmark_exception(TestContext context) {
+		final Async async = context.async();
+
+		String id = "1";
+		String requestUri = BookmarksVerticle.BOOKMARK_URL + "/" + id;
+		
+		doThrow(new RuntimeException("testing when things go bad")).when(mockDao).deleteBookmark(id);
+		
+		vertx.createHttpClient().delete(port, "localhost", requestUri)
+			.handler(response -> {
+				context.assertEquals(500, response.statusCode());
+				async.complete();
+			}).end();
+	}
 }

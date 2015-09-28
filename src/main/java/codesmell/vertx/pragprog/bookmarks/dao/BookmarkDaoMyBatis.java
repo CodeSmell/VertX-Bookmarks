@@ -1,8 +1,8 @@
-package vertx.pragprog.bookmarks.dao;
+package codesmell.vertx.pragprog.bookmarks.dao;
 
 import java.util.Collection;
 
-import vertx.pragprog.bookmarks.Bookmark;
+import codesmell.vertx.pragprog.bookmarks.Bookmark;
 
 public class BookmarkDaoMyBatis implements BookmarkDao{
 
@@ -24,4 +24,15 @@ public class BookmarkDaoMyBatis implements BookmarkDao{
 		return null;
 	}
 
+	@Override
+	public void updateBookmark(Bookmark bm) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteBookmark(String id) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1,4 +1,4 @@
-package vertx.hello;
+package codesmell.vertx.hello;
 
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import vertx.hello.HttpHelloVerticle;
+import codesmell.vertx.hello.HttpHelloVerticle;
 
 @RunWith(VertxUnitRunner.class)
 public class HttpHelloVerticleTest {

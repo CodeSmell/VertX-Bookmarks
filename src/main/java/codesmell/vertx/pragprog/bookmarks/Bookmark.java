@@ -1,4 +1,4 @@
-package vertx.pragprog.bookmarks;
+package codesmell.vertx.pragprog.bookmarks;
 
 /**
  * the Bookmark class from Seven Web Frameworks in Seven Weeks

@@ -1,4 +1,4 @@
-package vertx.pragprog.bookmarks;
+package codesmell.vertx.pragprog.bookmarks;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -13,7 +13,8 @@ import java.util.Collection;
 
 import javax.annotation.Resource;
 
-import vertx.pragprog.bookmarks.dao.BookmarkDao;
+import codesmell.vertx.pragprog.bookmarks.dao.BookmarkDao;
+import codesmell.vertx.pragprog.exceptions.NotFoundException;
 
 public class BookmarksVerticle extends AbstractVerticle {
 	private static Logger log = LoggerFactory.getLogger(BookmarksVerticle.class);
@@ -38,7 +39,9 @@ public class BookmarksVerticle extends AbstractVerticle {
 		router.get(BOOKMARK_URL).handler(this::getAllBookmarks);
 		router.get(BOOKMARK_URL + "/:id").handler(this::getBookmark);
 		router.post(BOOKMARK_URL).handler(this::addBookmark);
-
+		router.put(BOOKMARK_URL).handler(this::updateBookmark);
+		router.delete(BOOKMARK_URL + "/:id").handler(this::deleteBookmark);
+		
 		// start HTTP Listener
 		this.startHttp(router, future);
 	}
@@ -69,9 +72,7 @@ public class BookmarksVerticle extends AbstractVerticle {
 				}
 				else {
 					// error during retrieval
-					String errText = asynchResult.cause().getMessage();
-					log.error(errText);
-					routingContext.response().setStatusCode(500).end(errText);
+					this.handleErrorResponse(routingContext, asynchResult.cause());
 				}
 			});
 	}
@@ -80,7 +81,7 @@ public class BookmarksVerticle extends AbstractVerticle {
 	 * get a bookmark
 	 */
 	protected void getBookmark(RoutingContext routingContext) {
-		// get the Bookmark from the HTTP URL
+		// get the Bookmark ID from the HTTP URL
 		final String id = routingContext.request().getParam("id");
 
 		if (id != null) {
@@ -100,9 +101,7 @@ public class BookmarksVerticle extends AbstractVerticle {
 						}
 						else {
 							// error during retrieval
-							String errText = asynchResult.cause().getMessage();
-							log.error(errText);
-							routingContext.response().setStatusCode(500).end(errText);
+							this.handleErrorResponse(routingContext, asynchResult.cause());
 						}
 					});
 		}
@@ -133,10 +132,7 @@ public class BookmarksVerticle extends AbstractVerticle {
 								.end(BOOKMARK_URL + "/" + id);
 						}
 						else {
-							// error during retrieval
-							String errText = asynchResult.cause().getMessage();
-							log.error(errText);
-							routingContext.response().setStatusCode(500).end(errText);
+							this.handleErrorResponse(routingContext, asynchResult.cause());
 						}
 					});
 		}
@@ -145,7 +141,44 @@ public class BookmarksVerticle extends AbstractVerticle {
 			routingContext.response().setStatusCode(400).end("invalid JSON");			
 		}
 	}
+	
+	/**
+	 * update a bookmark
+	 */
+	protected void updateBookmark(RoutingContext routingContext) {
+		
+	}
 
+	/**
+	 * delete a bookmark
+	 */
+	protected void deleteBookmark(RoutingContext routingContext) {
+		// get the Bookmark ID from the HTTP URL
+		final String id = routingContext.request().getParam("id");
+		
+		if (id != null) {
+			log.info("attempting to delete the Bookmark (" + id + ")");
+			// never call blocking operations
+			// directly from an event loop
+			vertx.executeBlocking(
+					future -> {
+						this.asynchDeleteBookmark(future, id);
+					}, 
+					asynchResult -> {
+ 						if (asynchResult.succeeded()) {
+							routingContext.response().setStatusCode(200).end();
+						}
+						else {
+							this.handleErrorResponse(routingContext, asynchResult.cause());
+						}
+					});
+		}
+		else {
+			// if there is no id then it is a bad request
+			routingContext.response().setStatusCode(400).end();
+		}
+	}
+	
 	protected Bookmark decodeJsonToBookmark(String json){
 		Bookmark bm = null;
 		try {
@@ -163,6 +196,19 @@ public class BookmarksVerticle extends AbstractVerticle {
 		try {
 			String bmId = bookmarksDao.addBookmark(bm);
 			future.complete(bmId);
+		}
+		catch (Exception e) {
+			log.error(e.getMessage(), e);
+			future.fail(e);
+		}
+	}
+	
+	protected void asynchDeleteBookmark(Future<Object> future, String id) {
+		log.info("aynch attempting to delete Bookmark (" + id + ")");
+
+		try {
+			bookmarksDao.deleteBookmark(id);
+			future.complete();
 		}
 		catch (Exception e) {
 			log.error(e.getMessage(), e);
@@ -208,6 +254,18 @@ public class BookmarksVerticle extends AbstractVerticle {
 		}
 	}
 
+	protected void handleErrorResponse(RoutingContext routingContext, Throwable err){
+		String errText = err.getMessage();
+		if (err instanceof NotFoundException) {
+			// the row is gone for the id supplied
+			routingContext.response().setStatusCode(410).end(errText);
+		}
+		else {
+			log.error(errText);
+			routingContext.response().setStatusCode(500).end(errText);
+		}
+	}
+	
 	protected void startHttp(Router router, Future<Void> future) {
 		int port = config().getInteger("http.port", 8080);
 

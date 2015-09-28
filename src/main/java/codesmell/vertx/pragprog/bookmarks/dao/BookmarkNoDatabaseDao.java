@@ -1,11 +1,12 @@
-package vertx.pragprog.bookmarks.dao;
+package codesmell.vertx.pragprog.bookmarks.dao;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import vertx.pragprog.bookmarks.Bookmark;
+import codesmell.vertx.pragprog.bookmarks.Bookmark;
+import codesmell.vertx.pragprog.exceptions.NotFoundException;
 
 public class BookmarkNoDatabaseDao implements BookmarkDao {
 	private Map<String, Bookmark> bookmarksMap = new LinkedHashMap<>();
@@ -36,4 +37,26 @@ public class BookmarkNoDatabaseDao implements BookmarkDao {
 		return bmId;
 	}
 
+	@Override
+	public void updateBookmark(Bookmark bm) {
+		String id = bm.getBookmarkId();
+		if (bookmarksMap.containsKey(id)){
+			bookmarksMap.put(id, bm);
+		}
+		else {
+			// not found
+			throw new NotFoundException(id);
+		}
+	}
+
+	@Override
+	public void deleteBookmark(String id) {
+		if (bookmarksMap.containsKey(id)){
+			bookmarksMap.remove(id);
+		}
+		else {
+			// not found
+			throw new NotFoundException(id);
+		}
+	}
 }
