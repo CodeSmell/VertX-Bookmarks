@@ -1,5 +1,7 @@
 package codesmell.vertx.pragprog.bookmarks;
 
+import org.springframework.util.StringUtils;
+
 /**
  * the Bookmark class from Seven Web Frameworks in Seven Weeks
  */
@@ -34,5 +36,18 @@ public class Bookmark {
 	}
 	public void setBookmarkTitle(String bookmarkTitle) {
 		this.bookmarkTitle = bookmarkTitle;
-	}	
+	}
+	
+	public static boolean isValid(Bookmark bm){
+		boolean isValid = false;
+		
+		if (bm!=null){
+			if (!StringUtils.isEmpty(bm.getBookmarkTitle()) &&
+			    !StringUtils.isEmpty(bm.getBookmarkUrl())) {
+				isValid = true;
+			}
+		}
+		
+		return isValid;
+	}
 }

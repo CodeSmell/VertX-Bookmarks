@@ -117,7 +117,7 @@ public class BookmarksVerticle extends AbstractVerticle {
 	protected void addBookmark(RoutingContext routingContext) {
 
 		final Bookmark bm = this.decodeJsonToBookmark(routingContext.getBodyAsString());
-		if (bm!=null){
+		if (Bookmark.isValid(bm)){
 			vertx.executeBlocking(
 					future -> {
 						this.asynchAddBookmark(future, bm);
@@ -146,7 +146,7 @@ public class BookmarksVerticle extends AbstractVerticle {
 	 */
 	protected void updateBookmark(RoutingContext routingContext) {
 		final Bookmark bm = this.decodeJsonToBookmark(routingContext.getBodyAsString());
-		if (bm!=null){
+		if (Bookmark.isValid(bm)){
 			vertx.executeBlocking(
 					future -> {
 						this.asynchUpdateBookmark(future, bm);
@@ -155,8 +155,8 @@ public class BookmarksVerticle extends AbstractVerticle {
 						if (asynchResult.succeeded()) {
 							// Return the URL to the new bookmark
 							String id = (String) asynchResult.result();
-							routingContext.response()
-								.setStatusCode(204);					}
+							routingContext.response().setStatusCode(204).end();					
+						}
 						else {
 							this.handleErrorResponse(routingContext, asynchResult.cause());
 						}
