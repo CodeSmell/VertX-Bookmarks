@@ -128,7 +128,6 @@ public class BookmarksVerticle extends AbstractVerticle {
 							String id = (String) asynchResult.result();
 							routingContext.response()
 								.setStatusCode(201)
-								.putHeader(CONTENT_TYPE_HEADER, JSON_CONTENT)
 								.end(BOOKMARK_URL + "/" + id);
 						}
 						else {
@@ -146,7 +145,27 @@ public class BookmarksVerticle extends AbstractVerticle {
 	 * update a bookmark
 	 */
 	protected void updateBookmark(RoutingContext routingContext) {
-		
+		final Bookmark bm = this.decodeJsonToBookmark(routingContext.getBodyAsString());
+		if (bm!=null){
+			vertx.executeBlocking(
+					future -> {
+						this.asynchUpdateBookmark(future, bm);
+					},
+					asynchResult -> {
+						if (asynchResult.succeeded()) {
+							// Return the URL to the new bookmark
+							String id = (String) asynchResult.result();
+							routingContext.response()
+								.setStatusCode(204);					}
+						else {
+							this.handleErrorResponse(routingContext, asynchResult.cause());
+						}
+					});
+		}
+		else {
+			// invalid JSON
+			routingContext.response().setStatusCode(400).end("invalid JSON");			
+		}
 	}
 
 	/**
@@ -196,6 +215,19 @@ public class BookmarksVerticle extends AbstractVerticle {
 		try {
 			String bmId = bookmarksDao.addBookmark(bm);
 			future.complete(bmId);
+		}
+		catch (Exception e) {
+			log.error(e.getMessage(), e);
+			future.fail(e);
+		}
+	}
+	
+	protected void asynchUpdateBookmark(Future<Object> future, Bookmark bm) {
+		log.info("aynch attempting to update a Bookmark");
+
+		try {
+			bookmarksDao.updateBookmark(bm);
+			future.complete();
 		}
 		catch (Exception e) {
 			log.error(e.getMessage(), e);
