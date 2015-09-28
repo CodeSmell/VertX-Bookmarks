@@ -35,3 +35,20 @@ Then run the "fat" JAR file
 	
 	java -jar target/Bookmarks-0.0.1-SNAPSHOT-fat.jar
 
+## Testing Bookmarks
+Once the application is running you can test the REST API using various tools (SOAP UI, curl etc). 
+The easiest way is to use a browser and access one of the REST API that uses the GET method 
+		
+	http://localhost:8080/bookmarks
+
+This should return a JSON array:
+
+	[ {
+	  "bookmarkId" : "1",
+	  "bookmarkUrl" : "http://vertx.io",
+	  "bookmarkTitle" : "Vert.x Reactive Framework"
+	}, {
+	  "bookmarkId" : "2",
+	  "bookmarkUrl" : "http://typesafe.com/",
+	  "bookmarkTitle" : "Typesafe Reactive Framework"
+	} ]
