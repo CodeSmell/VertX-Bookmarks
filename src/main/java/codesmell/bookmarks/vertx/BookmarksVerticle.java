@@ -1,4 +1,4 @@
-package codesmell.vertx.pragprog.bookmarks;
+package codesmell.bookmarks.vertx;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -13,8 +13,9 @@ import java.util.Collection;
 
 import javax.annotation.Resource;
 
-import codesmell.vertx.pragprog.bookmarks.dao.BookmarkDao;
-import codesmell.vertx.pragprog.exceptions.NotFoundException;
+import codesmell.bookmarks.Bookmark;
+import codesmell.bookmarks.dao.BookmarkDao;
+import codesmell.bookmarks.exceptions.NotFoundException;
 
 public class BookmarksVerticle extends AbstractVerticle {
 	private static Logger log = LoggerFactory.getLogger(BookmarksVerticle.class);

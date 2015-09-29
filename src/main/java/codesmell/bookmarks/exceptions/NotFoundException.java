@@ -1,4 +1,4 @@
-package codesmell.vertx.pragprog.exceptions;
+package codesmell.bookmarks.exceptions;
 
 public class NotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 6800785022666156534L;

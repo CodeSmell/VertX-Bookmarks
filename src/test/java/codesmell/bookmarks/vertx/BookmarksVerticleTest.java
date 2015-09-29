@@ -1,4 +1,4 @@
-package codesmell.vertx.pragprog.bookmarks;
+package codesmell.bookmarks.vertx;
 
 import static org.mockito.Mockito.*;
 import io.vertx.core.DeploymentOptions;
@@ -22,10 +22,10 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import codesmell.vertx.pragprog.bookmarks.Bookmark;
-import codesmell.vertx.pragprog.bookmarks.BookmarksVerticle;
-import codesmell.vertx.pragprog.bookmarks.dao.BookmarkDao;
-import codesmell.vertx.pragprog.exceptions.NotFoundException;
+import codesmell.bookmarks.Bookmark;
+import codesmell.bookmarks.dao.BookmarkDao;
+import codesmell.bookmarks.exceptions.NotFoundException;
+import codesmell.bookmarks.vertx.BookmarksVerticle;
 
 @RunWith(VertxUnitRunner.class)
 public class BookmarksVerticleTest {

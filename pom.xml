@@ -87,7 +87,7 @@
 									</manifestEntries>
 									-->
 									<manifestEntries>
-										<Main-Class>codesmell.vertx.pragprog.bookmarks.spring.SpringRunner</Main-Class>
+										<Main-Class>codesmell.bookmarks.spring.SpringRunner</Main-Class>
 									</manifestEntries>
 								</transformer>
 							</transformers>

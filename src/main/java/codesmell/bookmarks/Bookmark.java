@@ -1,4 +1,4 @@
-package codesmell.vertx.pragprog.bookmarks;
+package codesmell.bookmarks;
 
 import org.springframework.util.StringUtils;
 

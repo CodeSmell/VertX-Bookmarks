@@ -1,12 +1,12 @@
-package codesmell.vertx.pragprog.bookmarks.dao;
+package codesmell.bookmarks.dao;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import codesmell.vertx.pragprog.bookmarks.Bookmark;
-import codesmell.vertx.pragprog.exceptions.NotFoundException;
+import codesmell.bookmarks.Bookmark;
+import codesmell.bookmarks.exceptions.NotFoundException;
 
 public class BookmarkNoDatabaseDao implements BookmarkDao {
 	private Map<String, Bookmark> bookmarksMap = new LinkedHashMap<>();

@@ -1,8 +1,8 @@
-package codesmell.vertx.pragprog.bookmarks.dao;
+package codesmell.bookmarks.dao;
 
 import java.util.Collection;
 
-import codesmell.vertx.pragprog.bookmarks.Bookmark;
+import codesmell.bookmarks.Bookmark;
 
 public interface BookmarkDao {
 	Collection<Bookmark> getAllBookmarks();

@@ -1,11 +1,11 @@
-package codesmell.vertx.pragprog.bookmarks.spring;
+package codesmell.bookmarks.spring;
 
 import io.vertx.core.Vertx;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import codesmell.vertx.pragprog.bookmarks.BookmarksVerticle;
+import codesmell.bookmarks.vertx.BookmarksVerticle;
 
 public class SpringRunner {
 

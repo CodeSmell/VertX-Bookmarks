@@ -1,4 +1,4 @@
-package codesmell.vertx.pragprog.bookmarks.spring;
+package codesmell.bookmarks.spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -7,9 +7,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 
-import codesmell.vertx.pragprog.bookmarks.BookmarksVerticle;
-import codesmell.vertx.pragprog.bookmarks.dao.BookmarkDao;
-import codesmell.vertx.pragprog.bookmarks.dao.BookmarkNoDatabaseDao;
+import codesmell.bookmarks.dao.BookmarkDao;
+import codesmell.bookmarks.dao.BookmarkNoDatabaseDao;
+import codesmell.bookmarks.vertx.BookmarksVerticle;
 
 @Configuration
 @PropertySource("classpath:/dataAccess.config")
