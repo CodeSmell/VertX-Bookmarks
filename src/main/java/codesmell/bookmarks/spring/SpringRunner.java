@@ -12,6 +12,8 @@ public class SpringRunner {
 	public static void main(String[] args){
 		ApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
 	    final Vertx vertx = Vertx.vertx();
+	    
+	    // TODO: get # instances from configuration and use that 
 	    vertx.deployVerticle(context.getBean(BookmarksVerticle.class));
 	}
 }

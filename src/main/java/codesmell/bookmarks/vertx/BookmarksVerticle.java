@@ -8,6 +8,7 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.StaticHandler;
 
 import java.util.Collection;
 
@@ -42,6 +43,12 @@ public class BookmarksVerticle extends AbstractVerticle {
 		router.post(BOOKMARK_URL).handler(this::addBookmark);
 		router.put(BOOKMARK_URL).handler(this::updateBookmark);
 		router.delete(BOOKMARK_URL + "/:id").handler(this::deleteBookmark);
+		
+		// enables the reading of files from webroot (default)
+		router.route(BOOKMARK_URL + "/static/*").handler(StaticHandler.create()
+				.setCachingEnabled(true)
+				.setDirectoryListing(false)
+				.setFilesReadOnly(false));
 		
 		// start HTTP Listener
 		this.startHttp(router, future);

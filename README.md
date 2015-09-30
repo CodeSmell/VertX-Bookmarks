@@ -26,6 +26,45 @@ Therefore I chose to use Spring IoC to manage dependencies but that is not requi
 ## Handling Data Access
 The other challenge in this project was working through how to access data. While using MongoDB is recommended, I figured that the original Bookmarks project in the PragProg book used a RDBMS. And, let's face it most projects are using SQL databases. Having already chosen to manage dependencies with Spring, I chose to use MyBatis and Spring to handle the data access.
 
+## The User Interface and Verticles
+I thought it would be helpful to add a simple Web UI for the bookmarks. I was originally trying to do this with two Verticles. One Verticle would handle the REST API and the other Verticle would serve the static resources. 
+
+	public class BookmarksVerticle {
+		...
+		public void start(Future<Void> future) {
+			...
+			
+			router.get(BOOKMARK_URL).handler(this::getAllBookmarks);
+			
+			...
+			
+			vertx.createHttpServer().requestHandler(router::accept).listen(8080, ...
+
+and 
+
+	public class BookmarksStaticWebVerticle {
+		...
+		public void start(Future<Void> future) {
+			...
+			
+			router.route(BOOKMARK_URL + "/static/*").handler(StaticHandler.create());
+			
+			...
+			
+			vertx.createHttpServer().requestHandler(router::accept).listen(8080, ...
+
+
+But when I deployed them both I got 
+
+	SEVERE: Address already in use: bind
+	java.net.BindException: Address already in use: bind
+
+I found out that I can't do that unless I started the HTTP listener on a different port. 
+
+The other option was to create a third Verticle to listen for HTTP requests, parse them based on the path and send the requests to the REST Verticle and Static Web Verticle over the over the event bus. My original two Verticles would then listen for these requests over the event bus instead of HTTP. 
+
+This might make for a good refactor later. 
+
 ## Running from Maven
 Run the following goals: 
 	

@@ -25,6 +25,5 @@ public class SpringConfig {
     @Bean @Scope("singleton")
     public BookmarksVerticle bookmarkVerticle() {
         return new BookmarksVerticle();
-    }    
-
+    }
 }
