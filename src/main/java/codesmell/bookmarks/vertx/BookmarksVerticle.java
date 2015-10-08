@@ -61,7 +61,9 @@ public class BookmarksVerticle extends AbstractVerticle {
 		// never call blocking operations
 		// directly from an event loop
 		vertx.executeBlocking(
-			this::asynchRetrieveAllBookmarks, 
+			future -> {
+				asynchRetrieveAllBookmarks(future);
+			},
 			asynchResult -> {
 				// check the result
 				if (asynchResult.succeeded()) {
